@@ -3,7 +3,7 @@ from collections import OrderedDict
 import praw
 
 reddit = praw.Reddit(client_id='p8Hs4qPd7HD1Wg',client_secret='9rEQJxxC7Tp_DD8wQLsshAOudNU', user_agent='App by /u/hershey92')
-app = Flask(__name__)
+reddapp = Flask(__name__)
 
 class Error:
     def make_error(self, status_code, sub_code, message, action):
@@ -46,4 +46,4 @@ def getSubredditSubmissions(subr):
     return jsonify(f_resp)
 
 if __name__ == '__main__':
-    app.run()
+    reddapp.run()

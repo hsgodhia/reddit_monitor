@@ -11,8 +11,8 @@ class Error:
         response.status_code = status_code
         return response
 
-@reddapp.route('/')
-def home():
+@reddapp.errorhandler(404)
+def not_found(error):
     err = Error()
     return err.make_error(200, 2, "...coded overnight, you've come to 404!", "change the endpoint to /reddit_stats/subreddit/<subr> ")
 
@@ -23,13 +23,18 @@ def getSubredditSubmissions(subr):
     k = request.args.get('limit', '10')
     f_resp = OrderedDict()
     result = []
+    
     try:
         subrredit_found = reddit.subreddit(subr)
         f_resp[subr + ' is about'] = subrredit_found.title
     except Exception:
         return err.make_error(200, 1, "No results found for given subreddit", "change subreddit to something else")
-
-    k = int(k)
+    
+    try:
+        k = int(k)
+    except Exception:
+        return err.make_error(200, 3, "invalid limit query param", "limit is a number try again!")
+    
     listing = None
     if rank_by == 'hot':
         listing = subrredit_found.hot(limit=k)
@@ -39,6 +44,9 @@ def getSubredditSubmissions(subr):
         listing = subrredit_found.top(limit=k)
     elif rank_by == 'rising':
         listing = subrredit_found.rising(limit=k)
+    else:
+        return err.make_error(200, 3, "invalid rank query param", "rank is hot/new/rising/top only try again!")
+    
     for submission in listing:
         r = {}
         r['title'] = submission.title
@@ -46,7 +54,7 @@ def getSubredditSubmissions(subr):
         r['Link'] = submission.url
         result.append(r)
     if len(result) < 1:
-        return err.make_error(200, 0, "No results found for given ranking type", "change rank type to something else")
+        return err.make_error(200, 0, "0 results found for given ranking type", "change rank type to something else")
     f_resp[rank_by + " " + str(k)] = result
     return jsonify(f_resp)
 

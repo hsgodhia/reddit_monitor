@@ -1,1 +1,1 @@
-web: gunicorn cdorstats --log-file -
+web: gunicorn cdo_redditor:reddapp --log-file -

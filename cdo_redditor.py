@@ -11,7 +11,12 @@ class Error:
         response.status_code = status_code
         return response
 
-@app.route('/reddit_stats/subreddit/<subr>', methods=['GET'])
+@reddapp.route('/')
+def home():
+    err = Error()
+    return err.make_error(200, 2, "This app was coded overnight, doesn't have a good 404 page", "change the URL to /reddit_stats/subreddit/<subr> ")
+
+@reddapp.route('/reddit_stats/subreddit/<subr>', methods=['GET'])
 def getSubredditSubmissions(subr):
     err = Error()
     rank_by = request.args.get('rank_by', 'hot')
@@ -46,4 +51,4 @@ def getSubredditSubmissions(subr):
     return jsonify(f_resp)
 
 if __name__ == '__main__':
-    reddapp.run()
+    reddapp.run(debug=True)

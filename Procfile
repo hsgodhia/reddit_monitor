@@ -1,0 +1,1 @@
+web: gunicorn cdo_redditor_wsgi.wsgi --log-file -

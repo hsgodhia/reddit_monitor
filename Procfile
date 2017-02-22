@@ -1,1 +1,1 @@
-web: gunicorn cdo_redditor_wsgi --log-file -
+web: gunicorn cdorstats --log-file -

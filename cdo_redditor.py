@@ -14,7 +14,7 @@ class Error:
 @reddapp.route('/')
 def home():
     err = Error()
-    return err.make_error(200, 2, "This app was coded overnight, doesn't have a good 404 page", "change the URL to /reddit_stats/subreddit/<subr> ")
+    return err.make_error(200, 2, "...coded overnight, you've come to 404!", "change the endpoint to /reddit_stats/subreddit/<subr> ")
 
 @reddapp.route('/reddit_stats/subreddit/<subr>', methods=['GET'])
 def getSubredditSubmissions(subr):

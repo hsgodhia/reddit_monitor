@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, redirect
 import praw, os, redis
 
-redis_url = os.environ('REDIS_URL')
+redis_url = os.environ['REDIS_URL']
 redis_conn = redis.from_url(redis_url)
 
 client_id = redis_conn.get('CLIENT_ID').decode("utf-8") 

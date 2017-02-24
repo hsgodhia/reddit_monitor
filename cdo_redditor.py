@@ -11,20 +11,20 @@ user_agent = redis_conn.get('USER_AGENT').decode("utf-8")
 reddit_inst = praw.Reddit(client_id = client_id, client_secret = client_secret , user_agent = user_agent)
 reddapp = Flask(__name__)
 
-class Error:
-    def make_error(self, status_code, message, action):
+class Message:
+    def make_message(self, status_code, message, action):
         response = jsonify({'message': message,'action': action})
         response.status_code = status_code
         return response
 
 @reddapp.errorhandler(404)
 def not_found(error):
-    err = Error()
-    return err.make_error(404, "You've come to 404!", "change the endpoint to /reddit_stats/subreddit/<subr> ")
+    err = Message()
+    return err.make_message(404, "You've come to 404!", "change the endpoint to /reddit_stats/subreddit/<subr> ")
 
 @reddapp.route('/reddit_stats/subreddit/<subr>', methods=['GET'])
 def getSubredditSubmissions(subr):
-    err = Error()
+    err = Message()
     rank_by = request.args.get('rank_by', 'hot')
     results_limit = request.args.get('limit', '10')
     response_object = {}
@@ -34,12 +34,12 @@ def getSubredditSubmissions(subr):
         response_object['subreddit_name'] = subr
         response_object['subreddit_title'] = subreddit_found.title
     except Exception:
-        return err.make_error(202, "0 results found for given subreddit", "change subreddit to something else")
+        return err.make_message(202, "0 results found for given subreddit", "change subreddit to something else")
     
     try:
         results_limit = int(results_limit)
     except Exception:
-        return err.make_error(400, "invalid limit query param", "limit is a number try again!")
+        return err.make_message(400, "invalid limit query param", "limit is a number try again!")
     
     listing = None
     if rank_by == 'hot':
@@ -51,7 +51,7 @@ def getSubredditSubmissions(subr):
     elif rank_by == 'rising':
         listing = subreddit_found.rising(limit=results_limit)
     else:
-        return err.make_error(400, "invalid rank query param", "rank is hot/new/rising/top only try again!")
+        return err.make_message(400, "invalid rank query param", "rank is hot/new/rising/top only try again!")
 
     for submission in listing:
         story = {}
@@ -61,7 +61,7 @@ def getSubredditSubmissions(subr):
         articles.append(story)
 
     if len(articles) < 1:
-        return err.make_error(202, "0 results found for given ranking type", "change rank type to something else")
+        return err.make_message(202, "0 results found for given ranking type", "change rank type to something else")
     
     response_object['results_limit'] = str(results_limit)
     response_object['ranking_method'] = rank_by
